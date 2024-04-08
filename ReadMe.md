@@ -14,7 +14,13 @@ ORD - SYR
 
 ### Airlines
 
-American, Delta, United, SouthWest, JetBlue
+American
+
+    Regional Carriers: 
+        Envoy - Carrier Code (MQ),
+        PSA -  Carrier Code (OH)
+
+ Delta, United, SouthWest, JetBlue,
 
 
 
