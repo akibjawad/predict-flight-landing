@@ -1,6 +1,6 @@
 ## Data Description
 
-Download both departues data from source airport, and arrival data to destination airport. Store departure data in the `data/departures` directory where filename pattern is `Airline_Source.csv`. Store arrival data in the `data/arrivals` directory where filename pattern is `Airline.csv`. Also please remove the meta data (first 7 lines of the downloaded csv file) from the data file.
+Download both departues data from source airport, and arrival data to destination airport. Store arrival data in the `data/arrivals` directory where filename pattern is `AirlineName_Airlines.csv`. Also please remove the meta data (first 7 lines of the downloaded csv file) from the data file.
 
 ### Data Period
 Month(s): March, April, and May
@@ -14,13 +14,32 @@ ORD - SYR
 
 ### Airlines
 
-American
+1. American
+2. Delta
+3. United 
+4. SouthWest 
+5. JetBlue
+6. Endeavor
+7. Envoy
+8. Mesa
+9. PSA
+10. Republic
+11. Skywest
 
-    Regional Carriers: 
-        Envoy - Carrier Code (MQ),
-        PSA -  Carrier Code (OH)
+## Final Data
+We build 3 dataset from the raw data
 
- Delta, United, SouthWest, JetBlue,
+### Heading of dataset-1, which we use to predict the first flight
+DATE,DAY,FLIGHT NUMBER,ORIGIN,DEPARTURE TIME,ARRIVAL TIME, AIRLINE_CARRIER_DELAY, AIRLINE_YEARLY_ON_TIME_ARRIVAL_PERCENTAGE, AIRPORT_RANKING_for_on_time_dep, WEATHER_DELAY, ARRIVAL STATUS
 
+### Heading of dataset-2, which we use to predict the second flight, based on previous flight status
+DATE,DAY,FLIGHT NUMBER,ORIGIN,DEPARTURE TIME,ARRIVAL TIME, AIRLINE_CARRIER_DELAY, AIRLINE_YEARLY_ON_TIME_ARRIVAL_PERCENTAGE, AIRPORT_RANKING_for_on_time_dep, WEATHER_DELAY, PREVIOUS_FLIGHT_STATUS, ARRIVAL STATUS
 
+### Weather Model, which predicts weather delay value for a flight
+From the weather data, predict the weather_delay column of dataset-1 and dataset-2
+
+### AIRLINE CARRIER DELAY 
+Carrier delay for airline is already there in the arrival data. For the test samples we use median value of carrier delay for the flights in april 2024.
+
+### AIRLINE_YEARLY_ON_TIME_ARRIVAL_PERCENTAGE 
 
