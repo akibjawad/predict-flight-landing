@@ -36,10 +36,16 @@ DATE,DAY,FLIGHT NUMBER,ORIGIN,DEPARTURE TIME,ARRIVAL TIME, AIRLINE_CARRIER_DELAY
 DATE,DAY,FLIGHT NUMBER,ORIGIN,DEPARTURE TIME,ARRIVAL TIME, AIRLINE_CARRIER_DELAY, AIRLINE_YEARLY_ON_TIME_ARRIVAL_PERCENTAGE, AIRPORT_RANKING_for_on_time_dep, WEATHER_DELAY, PREVIOUS_FLIGHT_STATUS, ARRIVAL STATUS
 
 ### Weather Model, which predicts weather delay value for a flight
-From the weather data, predict the weather_delay column of dataset-1 and dataset-2
+Get weather data for the dates we have in data, also collect weather prediction for the upcoming dates (April 19 to April 22). From the weather data, predict the weather_delay column of dataset-1 and dataset-2
 
 ### AIRLINE CARRIER DELAY 
 Carrier delay for airline is already there in the arrival data. For the test samples we use median value of carrier delay for the flights in april 2024.
 
 ### AIRLINE_YEARLY_ON_TIME_ARRIVAL_PERCENTAGE 
+add the yearly on-time percentage data for every airline from the directory `on-time-arrival-ranking-airlines` to the training data. There are data for 2003 to 2023. 
+We need to find on-time percentage data for every airlines for 2024, so that we can add those on our qweries.
+
+### AIRPORT_RANKING_for_on_time_dep
+Add the yearly on-time departure percentage for three airports (ORD, MCO and JFK) is available in the directory `on-departure-ranking-airport`
+
 
