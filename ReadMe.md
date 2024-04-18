@@ -35,7 +35,7 @@ DATE,DAY,FLIGHT NUMBER,ORIGIN,DEPARTURE TIME,ARRIVAL TIME, AIRLINE_CARRIER_DELAY
 ### Heading of dataset-2, which we use to predict the second flight, based on previous flight status
 DATE,DAY,FLIGHT NUMBER,ORIGIN,DEPARTURE TIME,ARRIVAL TIME, AIRLINE_CARRIER_DELAY, AIRLINE_YEARLY_ON_TIME_ARRIVAL_PERCENTAGE, AIRPORT_RANKING_for_on_time_dep, WEATHER_DELAY, PREVIOUS_FLIGHT_STATUS, ARRIVAL STATUS
 
-### Weather Model, which predicts weather delay value for a flight
+### Weather Model, which predicts weather delay value for a flight on dataset-1 and dataset-2
 Get weather data for the dates we have in data, also collect weather prediction for the upcoming dates (April 19 to April 22). From the weather data, predict the weather_delay column of dataset-1 and dataset-2
 
 ### AIRLINE CARRIER DELAY 
