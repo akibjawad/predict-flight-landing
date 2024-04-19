@@ -1,4 +1,4 @@
-datetime,tempmin,feelslikemin,dew,humidity,precip,precipcover,snow,snowdepth,windgust,windspeedmax,sealevelpressure,cloudcover,visibility,severerisk,icon
+DATE,tempmin,feelslikemin,dew,humidity,precip,precipcover,snow,snowdepth,windgust,windspeedmax,sealevelpressure,cloudcover,visibility,severerisk,weather_code
 2006-01-01,26,18.6,27.3,89.3,0.011,4.17,0,0,,6.6,1015.9,100,3.5,,rain
 2006-01-02,30.8,25,31.9,91.9,0.182,29.17,0,0,,12.4,1019.5,90.4,3.7,,rain
 2006-01-03,32.1,24.8,31.9,87.9,0.131,33.33,0,0,,13.5,1016.2,94.3,8.7,,rain
