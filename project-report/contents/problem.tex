@@ -1,6 +1,34 @@
 %!TEX root=../main.tex
 
+\section{Problem Description}
+\label{sec:problem}
 
+Aviation industry tries to follow pre-calculated schedule for each step of their operation.
+Airlines mention schedule departure time and scheduled arrival time of a flight while they are selling tickets for that flight.
+But while operating the flight, actual departure or arrival time might be different from the time scheduled earlier. 
+In this project, we are more concerned about the arrival time of a flight.
 
-\section{Overview of \sysname}
-\label{sec:overview}
+Depending on the amount of difference between the scheduled arrival time and actual arrival time,
+we are classifying arrival status of a flight as ``EARLY'', ``ON-TIME'', or ``LATE.''
+If actual arrival time of a flight is falls between the 5 minutes offset (5 minutes earlier or 5 minutes later) of the scheduled arrival time,
+we are classifying the arrival status as ``ON-TIME.'' 
+If a flight arrives more than 5 minutes earlier than the scheduled time, we classify the arrival status of the flight as ``EARLY.''
+On the other hand, if it arrives more than 5 minutes later than the scheduled time, we classify the arrival status of the flight as ``LATE.''
+
+Now, solving the general problem (predicting arrival status of all operating flights) would require way too much data
+and development of sophisticated machine learning algorithms.
+Given the one-month time period and the restriction on using neural network based algorithms, we decided to solve a relatively specific version of the problem.
+
+In this version, instead of predicting arrival status of all flights, we decided to predict arrival status of 6 flights at one specific airport, Syracuse Hancock International Airport (SYR), from 3 different origin airports:
+John F. Kennedy International Airport (JFK),
+O'Hare International Airport (ORD), and Orlando International Airport (MCO).
+In particular, Six flights (3 pairs from each origin) that we choose for predicting arrival status are: United Airlines UA 1400 and American Airlines AA 3402 from ORD in Chicago,
+Jet Blue B6 116 and Delta Airlines DL 5182 from JFK in New York, 
+and Jet Blue B6 656 and Southwest Airlines WN 5285 from MCO in Orlando. 
+Flights in each pair from the same origin departs in sequence.
+For example, from ORD, UA 1400 departs at 18:52 and AA 3402 departs at 19:59.
+First, we need to predict arrival status (at SYR) of the earlier flight (UA 1400).
+After that, given the arrival status (EARLY, ON-TIME, LATE) of the earlier flight, we need to predict the arrival status of the later flight (AA 3402).
+For the first prediction, the prediction query will contain flight date, flight no, origin, scheduled departure time, and  scheduled arrival time. 
+For the second prediction, prediction will query will contain an additional information which is the arrival status of the earlier flight.
+ 
