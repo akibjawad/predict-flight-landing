@@ -1,4 +1,26 @@
 %!TEX root=../main.tex
 \begin{abstract}
-In this project, our goal was to predict arrival status of a flight based on the available data. 
+%put this line in intro. Abstract is getting too big.
+Despite having an advertised arrival time,
+a flights' actual arrival time can be far from the scheduled time.
+One metric, arrival status, can be used to measure the disparity between
+the scheduled arrival time and the actual arrival time of a flight.
+Arrival status of a flight can be early, on-time or delayed.
+In this project, our goal was to predict the arrival status of a flight 1-3 days earlier than the actual flight.
+%To reduce the scale of the experiment, 
+Solving the general problem of predicting arrival status for any flight is too large to solve within the time-frame of one month.  
+Hence, we attempted to solve a miniature version of the problem where we build a model to predict the arrival status of 6 flights arriving at Syracuse from 3 different origins (New York, Chicago, and Orlando).
+Given the miniature size of our problem, we did not employ any deep learning techniques to built the model. 
+We built a tree-based based machine learning model from the historical data of flights
+that were operating between 2006 and 2024.
+In our model, we incorporated 3 categories of flight data: flight characteristics, airlines on-time arrival history, and airport's on-time departure history. 
+Additionally, we incorporated historical weather data in our model.
+We built an ensemble of trees by using XGBoost algorithm to predict the arrival status of a flight given the flight date, flight no, origin, scheduled departure time, and scheduled arrival time.
+We evaluated our model based on its' prediction accuracy on the test dataset and
+based on its' accuracy in predicting arrival status of future flights operated in the period of 4 days (from April 19, 2024 to April 23, 2024).
+On our test dataset of 2818 samples, our model achieves 52.7\% accuracy, while predicting arrival status of future flights, our model were correct on 12 out of 23 occasions.
+%Due to time constraint, we tried to optimize our model for predicting arrival status of
+%6 flights arriving at Syracuse from 3 different origins (New York, Chicago and Orlando).  
+%John F. Kennedy International Airport (JFK), Chicago O'Hare International Airport (ORD), and 
+\\
 \end{abstract}
