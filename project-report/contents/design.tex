@@ -3,7 +3,19 @@
 \section{Proposed Solution}
 \label{sec:solution}
 
-From the problem description, we can understand we need to 
+We built ensemble of tree based two models to predict arrival status of flights.
+One model is used for predicting arrival status of the earlier flight where previous flight status is not available in the prediction query.
+Remaining model is used for predicting the flight where previous flight arrival status is provided. 
+
+We tried to be methodical in solving this problem, we identified that arrival status of a flight can be affected by Four factors:
+\begin{enumerate}
+	\item Characteristics of the flight coming to that destination
+	\item Weather properties on that day of  flight
+	\item Reputation of the airlines in managing their flights
+	\item Reliability of the origin airport in assuring on-time departure of flights
+\end{enumerate}
+We incorporated all those factors in building our models.
+In this section, we will describe our overall algorithm to build those two ensemble of tree models. We will describe our data collection process in subsection \ref{subsec:data_collection}, data pre-processing in subsection \ref{subsec:data_preprocessing} and finally model training in subsection \ref{subsec:model_training}.
 
 %
 %\begin{figure}[!t]
@@ -14,6 +26,99 @@ From the problem description, we can understand we need to
 %%	\vspace*{-1em}
 %\end{figure}
 
+\subsection{Data Collection}
+\label{subsec:data_collection}
+For our data collection we were largely dependent on Bureau of Transportation Statistics (BTS) \cite{BTS}.
 
-\subsection{Workflow}
-\label{subsec:SystemWorkflow}
+To collect characteristics of flights coming to the destination airport, SYR, we collected data of all flights arriving at SYR from the BTS On-Time Arrival Statistics \cite{btsOnTimeArrival}. 
+The dataset contains data of flights operated by 11 carriers during the time period starting from 2006 to 2023.
+To avoid outliers in our dataset, we skipped flight data for some specific years 2008, 2020, and 2021.
+We assume due to recession in 2008 and COVID pandemic in 2020 and 2021, flight data has drastically different data pattern.
+Dataset contains 17 features in total. All the features of the data can be visible on our code and in our github repo. Some of the important features along with other data properties are included in the Table \ref{tab:arrival_data}.
+\begin{table}[htbp]
+	\centering
+%	\hline
+	\caption{Description fo the On-Time Arrival Data for all flights ariving at SYR.}
+	\begin{tabular}{| p{3.85cm}|p{3.85cm} |}
+		\hline
+		Data Property & Description \\
+		\hline
+		\hline
+		Time Period & Month: March, April, and May \newline Year: 2006, 2007, 2009-2019, 2022-2023 \\
+		\hline
+		Airlines & American, Delta, United, SouthWest, JetBlue, Endeavor, Envoy, Mesa, PSA, Republic, and Skywest. \\
+		\hline
+		Notable Features & Carrier Code, Date (MM/DD/YYYY), Flight Number, Origin Airport, Scheduled Arrival Time, Scheduled Elapsed Time (Minutes),  Arrival Delay (Minutes), Delay Carrier (Minutes), Delay Weather (Minutes).\\
+		\hline
+%		\hline
+	\end{tabular}
+	\label{tab:arrival_data}
+\end{table}
+%5\textbf{Time Period of data:} We collected flight data for the month of March, April, and May for the year 2006, 2007, 2009-2019, 2022-23, and 2024 year to date 
+%\\
+%\textbf{Tracked flights:} We collected statistics for all flights arriving at the destination airport (SYR). \\
+%\textbf{Airlines:} Data contains flights operated by American, Delta, United, SouthWest, JetBlue, Endeavor, Envoy, Mesa, PSA, Republic, and Skywest.\\
+%\textbf{Features in this data: } Dataset contains 17 features. All the features of the data can be visible on our code and github repo. Some of the important features are: Carrier Code, Date (MM/DD/YYYY), Flight Number, Origin Airport, Scheduled Arrival Time, Scheduled Elapsed Time (Minutes),  Arrival Delay (Minutes), Delay Carrier (Minutes), Delay Weather (Minutes).
+
+%Carrier Code, Date (MM/DD/YYYY), Flight Number, Tail Number, Origin Airport, Scheduled Arrival Time, Actual Arrival Time, Scheduled Elapsed Time (Minutes), Actual Elapsed Time (Minutes), Arrival Delay (Minutes), Wheels-on Time, Taxi-In time (Minutes), Delay Carrier (Minutes), Delay Weather (Minutes), Delay National Aviation System (Minutes), Delay Security (Minutes), Delay Late Aircraft Arrival (Minutes)
+
+We collected historical weather data for training purpose and future weather predictions for testing purpose (to include weather data in the future test samples) from the source  Visual Crossing \cite{weatherdatasrc}.
+While our data source 
+%Visual Crossing \cite{weatherdatasrc}
+can provide hourly weather statistics, we collected daily statistics to reduce the amount of data. Properties of the weather data is provided in Table \ref{tab:w_data}\\
+\begin{table}[htbp]
+	\centering
+	%	\hline
+	\caption{Description fo the Weather Data}
+	\begin{tabular}{| p{3.85cm}|p{3.85cm} |}
+		\hline
+		Data Property & Description \\
+		\hline
+		\hline
+		Time Period & From January 1, 2006 to May 15 2024 \\
+		\hline
+		Notable Features & DATE, tempmin, feelslikemin, dew, humidity, precip, precipcover, snow, snowdepth, windgust, windspeedmax, sealevelpressure, cloudcover, visibility, severerisk, weather\_code (cloudy, partly\_cloudy\_day, rain, snow, wind)\\
+		\hline
+		%		\hline
+	\end{tabular}
+	\label{tab:w_data}
+\end{table}
+%\textbf{Time Period of Data:} All the dates starting from January 1, 2006 to May 15, 2026.\\
+%\textbf{Features:}
+%sTo reduce the amount of data we did collected weather statistics on a daily basis instead of hourly .
+
+We assume on-time arrival status of a flight heavily depends on how airline crew manages their flight.
+For this reason, we collected a ranking of airlines (airline ranking data) based on the percentage of flights operated by a certain airline arrived on time.
+This ranking in published by BTS \cite{airlineOnTimeArrival} and data is available for the years from 2003 to 2023.
+%This data presents percentage of the flights operated by a certain airline arrived on time in the period from 2003 to 2023.
+
+We also assume on-time arrival status of a flight depends on how the origin airport ensures that the flights depart on-time.
+For this reason, we collected a ranking of airports (airport ranking data) based on the percentage of flights originating from that airport departs on-time. This ranking of airports is also published by BTS \cite{airportOnTimeDep} and ranking data is available for the years from 2003 to 2023.
+
+\subsection{Data Pre-Processing}
+\label{subsec:data_preprocessing}
+
+As we mentioned in \ref{subsec:data_collection}, we collected 4 categories of data to build our model.
+We combined all the collected data to create two datasets that is required for building the two models we proposed at the beginning of this section.
+The sequence of steps we took to create those two datasets are:
+\begin{enumerate}
+	\item Combine flight data of all 11 carriers to create a single dataset containing all flights arriving at SYR. We then filtered to keep only those flights that departed from either of the three airports (ORD, JFK, and MCO). At this stage we have data for 14087 flights where we have 17 features for each flights. 
+	\item We cannot actually utilize all 17 features in our combined flight data, because during real time testing (predicting arrival status of future flights from April 19 to April 23) we cannot provide data for all the features. Example of such feature can be Carrier Delay, Weather Delay, Taxi-In Time, Wheel-on Time etc. Since we are predicting arrival status of flights that will take in future we do not know how much Carrier Delay or Weather Delay that specific flight is going to observe. 
+	\item Hence, we drop those extra features and converted some of the features to match features of our test data-frame. For example we computed scheduled departure time by subtracting scheduled elapsed time from the scheduled arrival time.
+	\item We created our target variable ARRIVAL STATUS, based on the feature ``arrival delay'' available in the dataset. For example, If ``arrival delay'' is less than -5 (flight arrived more than 5 minutes early) we set the ``ARRIVAL STATUS'' to 'EARLY'. In a similar manner we classified all the flights to ``EARLY'', ``ON-TIME'', and ``LATE''.
+	\item At this stage, we need to process our airline on-time arrival percentage data. Collected dataset from BTS \cite{airlineOnTimeArrival}, contains a percentage of flights that arrived on-time out of all the flights operated by a certain airline on a specific year. But the problem is all airlines did not submit that percentage data to BTS for all the years. In those cases, we filled those percentage data with minimum percentage reported by that specific airline. Our assumption is if an airline did not submit their on-time arrival percentage to BTS, they must performed worse than years they reported to BTS.
+	We created a new feature ``AIRLINE YEARLY ON-TIME ARR PERCENTAGE'' from this data.
+	\item In a similar manner, we also created another feature ``AIRPORT YEARLY ON-TIME DEP PERCENTAGE'' from our airport ranking data.
+	\item After processing both airline ranking data and airport ranking data, we included weather data for all the flights. We simply selected dates for each flight, collected weather data for that specific date, and then added weather related features for that flight. To reduce column count, we did not include all the weather features. 
+	\item At this stage, dataset for our first model is should be ready. Features in this dataset are: DATE, DAY, FLIGHT NUMBER, ORIGIN, DEPARTURE TIME, ARRIVAL TIME, AIRPORT YEARLY ON-TIME DEP PERCENTAGE, AIRLINE YEARLY ON-TIME ARR PERCENTAGE, ARRIVAL STATUS, weather\_code, tempmin, precipcover, snowdepth, windspeedmax, visibility, cloudcover.
+	
+	\item We created dataset-2 based on the dataset-1. We selected all the flight that arrives from the same origin on a same day. Then for each flight, we created one extra feature ``previous\_flight\_status" based on the arrival status of the flight that arrived earlier from the same origin on a same day. Hence, features of dataset-2 includes all the features of dataset-1 and one extra feature named ``previous\_flight\_status''.
+\end{enumerate}
+%Our data pre-processing pipeline 
+%on time arrival data for flights arriving at Syracuse that are operated by 11 airlines. Raw data was 
+
+
+\subsection{Model Training}
+\label{subsec:model_training}
+% train, test, cross validation, parmeter tuning 
+
